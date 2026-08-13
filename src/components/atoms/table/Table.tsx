@@ -1,89 +1,160 @@
-import React, { forwardRef, useState } from 'react';
-import { TableVirtuoso, type TableComponents } from 'react-virtuoso';
+import { useState } from 'react';
 import {
+    Box,
+    Button,
+    Paper,
     Table,
     TableBody,
     TableCell,
     TableContainer,
     TableHead,
     TableRow,
-    Paper,
-    Button,
 } from '@mui/material';
-import './Table.css';
-export interface ColumnConfig<T> {
-    field: keyof T | string;
+import {
+    List,
+    type RowComponentProps,
+} from 'react-window';
+
+export interface Column {
+    field: string;
     headerName: string;
-    width?: number | string;
-    renderCell?: (row: T) => React.ReactNode;
+    width?: string;
 }
 
-interface ReusableVirtualTableProps<T> {
-    data: T[];
-    columns: ColumnConfig<T>[];
-    height?: number | string;
+interface User {
+    id: number;
+    name: string;
+    email: string;
+    role: string;
+    [key: string]: any;
 }
 
-const MUIVirtuosoComponents: TableComponents<any> = {
-    Scroller: forwardRef<HTMLDivElement, any>((props, ref) => (
-        <TableContainer component={Paper} {...props} ref={ref} />
-    )),
-    Table: (props) => (
-        <Table {...props} style={{ ...props.style, borderCollapse: 'separate' }} />
-    ),
-    TableHead: forwardRef<HTMLTableSectionElement, any>((props, ref) => (
-        <TableHead {...props} ref={ref} />
-    )),
-    TableBody: forwardRef<HTMLTableSectionElement, any>((props, ref) => (
-        <TableBody {...props} ref={ref} />
-    )),
-    TableRow: (props) => <TableRow {...props} />,
+const DEFAULT_COLUMNS: Column[] = [
+    { field: 'id', headerName: 'ID', width: '10%' },
+    { field: 'name', headerName: 'Name', width: '30%' },
+    { field: 'email', headerName: 'Email', width: '40%' },
+    { field: 'role', headerName: 'Role', width: '20%' },
+];
+
+const DEFAULT_USERS: User[] = Array.from({ length: 10000 }, (_, index) => ({
+    id: index + 1,
+    name: `User ${index + 1}`,
+    email: `user${index + 1}@example.com`,
+    role: index % 2 === 0 ? 'Developer' : 'Designer',
+}));
+
+const ROW_HEIGHT = 53;
+const TABLE_HEIGHT = 400;
+
+type CustomRowProps = {
+    data: Record<string, any>[];
+    columns: Column[];
 };
 
-export function ReusableVirtualTable<T extends { id: string | number }>({
-    data,
-    columns,
-    height = 450,
-}: ReusableVirtualTableProps<T>) {
+const Row = ({ index, style, data, columns }: RowComponentProps<CustomRowProps>) => {
+    const item = data[index];
 
-    const fixedHeaderContent = () => (
-        <TableRow sx={{ backgroundColor: 'background.paper' }}>
-            {columns.map((column) => (
+    return (
+        <TableRow
+            component="div"
+            style={{
+                ...style,
+                display: 'flex',
+                width: '100%',
+            }}
+        >
+            {columns.map((col) => (
                 <TableCell
-                    key={String(column.field)}
-                    variant="head"
-                    style={{ width: column.width }}
-                    sx={{ fontWeight: 'bold' }}
+                    key={col.field}
+                    component="div"
+                    sx={{
+                        width: col.width || `${100 / columns.length}%`,
+                        flexShrink: 0,
+                    }}
                 >
-                    {column.headerName}
+                    {item ? item[col.field] : ''}
                 </TableCell>
             ))}
         </TableRow>
     );
+};
 
-    const itemContent = (_index: number, row: T) => (
-        <>
-            {columns.map((column) => {
-                const value = row[column.field as keyof T];
-                return (
-                    <TableCell key={String(column.field)}>
-                        {column.renderCell ? column.renderCell(row) : (value as React.ReactNode)}
-                    </TableCell>
-                );
-            })}
-        </>
-    );
-    const [fullSize, setFullsize] = useState(false);
+export interface VirtualTableProps {
+    columns?: Column[];
+    data?: Record<string, any>[];
+}
+
+export default function VirtualTable({
+    columns = DEFAULT_COLUMNS,
+    data = DEFAULT_USERS,
+}: VirtualTableProps) {
+    const [isFullWidth, setIsFullWidth] = useState<boolean>(true);
+
     return (
-        <div style={{ height, width: '100%' }}>
-            <Button onClick={() => setFullsize(!fullSize)}>{fullSize ? 'maxsize' : 'minsize'}</Button>
-                <TableVirtuoso
-                className={`table-container ${fullSize ? 'table-container--fullsize' : ''}`}
-                data={data}
-                components={MUIVirtuosoComponents}
-                fixedHeaderContent={fixedHeaderContent}
-                itemContent={itemContent}
-            />
-        </div>
+        <Box sx={{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+            <Box
+                sx={{
+                    width: isFullWidth ? '100%' : '60%',
+                    display: 'flex',
+                    justify: 'flex-end',
+                    mb: 1,
+                }}
+            >
+                <Button
+                    variant="contained"
+                    onClick={() => setIsFullWidth((prev) => !prev)}
+                >
+                    {isFullWidth ? 'Detach' : 'Attach'}
+                </Button>
+            </Box>
+
+            <Paper
+                sx={{
+                    width: isFullWidth ? '100%' : '60%',
+                }}
+            >
+                <TableContainer>
+                    <Table>
+                        <TableHead>
+                            <TableRow
+                                component="div"
+                                sx={{
+                                    display: 'flex',
+                                    width: '100%',
+                                }}
+                            >
+                                {columns.map((col) => (
+                                    <TableCell
+                                        key={col.field}
+                                        component="div"
+                                        sx={{
+                                            width: col.width || `${100 / columns.length}%`,
+                                            flexShrink: 0,
+                                        }}
+                                    >
+                                        {col.headerName}
+                                    </TableCell>
+                                ))}
+                            </TableRow>
+                        </TableHead>
+
+                        <TableBody component="div">
+                            <List
+                                rowComponent={Row}
+                                rowCount={data.length}
+                                rowHeight={ROW_HEIGHT}
+                                rowProps={{ data, columns }}
+                                style={{
+                                    height: TABLE_HEIGHT,
+                                    width: '100%',
+                                }}
+                            />
+                        </TableBody>
+                    </Table>
+                </TableContainer>
+            </Paper>
+        </Box>
     );
 }
+
+export { VirtualTable as ReusableVirtualTable };
