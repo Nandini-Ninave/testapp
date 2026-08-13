@@ -7,6 +7,7 @@ export interface InputProps extends Omit<React.InputHTMLAttributes<HTMLInputElem
   size?: 'sm' | 'md' | 'lg';
   value?: string;
   name?: string;
+  // type?: string;
 }
 
 export const Input = forwardRef<HTMLInputElement, InputProps>(
@@ -16,6 +17,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
       placeholder,
       value,
       name,
+      // type,
       size = 'md',
       className = '',
       ...props
@@ -43,6 +45,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
         </label>
         <div className={wrapperClasses}>
           <input
+            // type="checkbox"
             className="input-element"
             {...props}
           />

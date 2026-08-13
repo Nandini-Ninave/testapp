@@ -5,9 +5,7 @@ import { Input } from "./Input";
 describe(Input, () => {
     it('should render input component with label and placeholder', () => {
         render(<Input label="Email" placeholder="Enter your email..." />);
-        // const inputElement = screen.getByPlaceholderText('Enter your email...');
         const labelElement = screen.getByText('Email');
-        // expect(inputElement).toBeInTheDocument();
         expect(labelElement).toBeInTheDocument();
     })
     it('apply custom className to the input container', () => {
@@ -36,12 +34,6 @@ describe(Input, () => {
     it('should render input component with value and name', () => {
         render(<Input label="Email" value="name@gmail.com" />);
         const input = screen.getByText('Email').parentElement?.querySelector('input.input-element') as HTMLInputElement;
-        // expect(input).toBeInTheDocument();
-        // expect(input.name).toBe('email');   
-        // expect(input.value).toBe('name@gmail.com');
-        // expect(input).toHaveValue('name@gmail.com');
-        // const input = screen.getByRole('input', { name: /email/i });
         expect(input).toBeInTheDocument();
-        // expect(input).toHaveValue('name@gmail.com');
     })
 })

@@ -1,0 +1,17 @@
+.input-field-wrapper--sm {
+  height: 15px;
+  width: 15px;
+  padding: 0 var(--token-spacing-sm);
+}
+
+.input-field-wrapper--md {
+  height: 20px;
+  width:20px;
+  padding: 0 var(--token-spacing-md);
+}
+
+.input-field-wrapper--lg {
+  height: 25px;
+  width: 25px;
+  padding: 0 var(--token-spacing-lg);
+}

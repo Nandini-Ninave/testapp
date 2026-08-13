@@ -4,7 +4,6 @@ import './Dropdown.css';
 export interface DropdownOption {
   label: string;
   value: string;
-  disabled?: boolean;
 }
 
 export interface DropdownProps
@@ -15,7 +14,6 @@ export interface DropdownProps
   size?: 'sm' | 'md' | 'lg';
   error?: boolean | string;
   helperText?: string;
-  fullWidth?: boolean;
 }
 
 export const Dropdown = forwardRef<HTMLSelectElement, DropdownProps>(
@@ -27,8 +25,6 @@ export const Dropdown = forwardRef<HTMLSelectElement, DropdownProps>(
       size = 'md',
       error,
       helperText,
-      fullWidth = false,
-      disabled = false,
       className = '',
       children,
       value,
@@ -45,7 +41,6 @@ export const Dropdown = forwardRef<HTMLSelectElement, DropdownProps>(
 
     const containerClasses = [
       'dropdown-container',
-      fullWidth ? 'dropdown-container--full-width' : '',
       className,
     ]
       .filter(Boolean)
@@ -55,7 +50,6 @@ export const Dropdown = forwardRef<HTMLSelectElement, DropdownProps>(
       'dropdown-field-wrapper',
       `dropdown-field-wrapper--${size}`,
       error ? 'dropdown-field-wrapper--error' : '',
-      disabled ? 'dropdown-field-wrapper--disabled' : '',
     ]
       .filter(Boolean)
       .join(' ');
@@ -73,7 +67,6 @@ export const Dropdown = forwardRef<HTMLSelectElement, DropdownProps>(
         <div className={wrapperClasses}>
           <select
             ref={ref}
-            disabled={disabled}
             className={`dropdown-select ${isPlaceholderSelected && placeholder ? 'dropdown-select--placeholder' : ''
               }`}
             value={value}
@@ -82,14 +75,14 @@ export const Dropdown = forwardRef<HTMLSelectElement, DropdownProps>(
             {...props}
           >
             {placeholder && (
-              <option value="" disabled hidden>
+              <option value="">
                 {placeholder}
               </option>
             )}
             {children
               ? children
               : normalizedOptions.map((opt) => (
-                <option key={opt.value} value={opt.value} disabled={opt.disabled}>
+                <option key={opt.value} value={opt.value}>
                   {opt.label}
                 </option>
               ))}
