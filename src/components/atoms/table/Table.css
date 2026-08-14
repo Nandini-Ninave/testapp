@@ -1,4 +1,3 @@
-.table-container--fullsize{
-    width: 50%;
-    height: 50%;
+.tableHead{
+    background-color: var(--token-color-primary);
 }
