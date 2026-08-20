@@ -14,7 +14,7 @@ import {
     TableBody,
     TableCell,
     TableContainer,
-    TableHead,
+    // TableHead,
     TableRow,
     Tooltip,
     type SelectChangeEvent,
@@ -166,7 +166,6 @@ export default function VirtualTable({
     const [isFullWidth, setIsFullWidth] = useState<boolean>(true);
     const theme = useTheme();
     const [FieldName, setFieldName] = useState<string[]>(() => columns.map((col) => col.field));
-
     useEffect(() => {
         setFieldName(columns.map((col) => col.field));
     }, [columns]);
@@ -208,6 +207,7 @@ export default function VirtualTable({
 
     return (
         <Box sx={{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+            {/* <DataGridPro columns={columns} rows={data}/> */}
             <Box
                 sx={{
                     width: isFullWidth ? '100%' : '60%',
@@ -219,12 +219,24 @@ export default function VirtualTable({
                 <Button
                     variant="contained"
                     onClick={() => setIsFullWidth((prev) => !prev)}
+                    sx={{
+                        height: '50px',
+                        mt: 1
+                    }}
                 >
                     {isFullWidth ? 'Detach' : 'Attach'}
                 </Button>
                 <div>
                     <FormControl sx={{ m: 1, width: 300 }}>
-                        <InputLabel id="demo-multiple-name-label">Fields</InputLabel>
+                        <InputLabel
+                            id="demo-multiple-name-label"
+                            sx={{
+                                mr: 1,
+
+                            }}
+                        >
+                            Fields
+                        </InputLabel>
                         <Select<string[]>
                             labelId="demo-multiple-name-label"
                             id="demo-multiple-name"
@@ -234,6 +246,10 @@ export default function VirtualTable({
                             input={<OutlinedInput label="Tag" />}
                             renderValue={() => 'Selected fields'}
                             MenuProps={MenuProps}
+                            sx={{
+                                width: '80%',
+                                height: '50px'
+                            }}
                         >
                             {columns.map((col) => (
                                 <MenuItem key={col.field} value={col.field} style={getStyles(col.field, FieldName, theme)}>
@@ -253,7 +269,24 @@ export default function VirtualTable({
             >
                 <TableContainer>
                     <Table>
-                        <TableHead className='tableHead'>
+                        {/* {filteredcol.map((col) => (
+                        <Draggable
+              key={col.field}
+              draggableId={col.field.toString()}
+            //   index={index}
+            >
+              {(provided, snapshot) => (
+                <div
+                  ref={provided.innerRef}
+                  {...provided.draggableProps}
+                  {...provided.dragHandleProps}
+                >
+                  {col.field}
+                </div>
+              )}
+            </Draggable>
+            ))} */}
+                        {/* <TableHead className='tableHead'>
                             <TableRow
                                 component="div"
                                 sx={{
@@ -270,7 +303,7 @@ export default function VirtualTable({
                                     />
                                 ))}
                             </TableRow>
-                        </TableHead>
+                        </TableHead> */}
 
                         <TableBody component="div">
                             <List
